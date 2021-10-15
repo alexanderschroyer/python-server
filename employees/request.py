@@ -5,28 +5,29 @@ from models import Employee
 EMPLOYEES = [{
     "name": "Eric \"Macho Man\" Taylor",
     "email": "macho@man.com",
-    "employee": True,
-    "id": 1
+    "id": 1,
+    "location_id": 1
 }, {
     "name": "Alexander Schroyer",
     "email": "alex@geemail.com",
-    "employee": True,
-    "id": 2
+    "id": 2,
+    "location_id": 2,
+    "password": "alex"
 }, {
     "name": "Kylie Postlethwaite",
     "email": "kylie@geemail.com",
-    "employee": True,
-    "id": 3
+    "id": 3,
+    "location_id": 2
 }, {
     "name": "Brandon De Leon",
     "email": "brandon@geemail.com",
-    "employee": True,
-    "id": 4
+    "id": 4,
+    "location_id": 1
 }, {
     "name": "Pauly D",
     "email": "pauly@geemail.com",
-    "employee": False,
-    "id": 5
+    "id": 5,
+    "location_id": 1
 }]
 
 # def get_all_employees():
@@ -43,12 +44,10 @@ def get_all_employees():
         # Write the SQL query to get the information you want
         db_cursor.execute("""
         SELECT
-            a.id,
-            a.name,
-            a.email,
-            a.employee,
-            a.location_id
-        FROM employee a
+            e.id,
+            e.name,
+            e.location_id
+        FROM employee e
         """)
 
         # Initialize an empty list to hold all animal representations
@@ -64,8 +63,7 @@ def get_all_employees():
             # Note that the database fields are specified in
             # exact order of the parameters defined in the
             # Animal class above.
-            employee = Employee(row['id'], row['name'], row['email'],
-                            row['employee'], row['location_id'])
+            employee = Employee(row['id'], row['name'], row['location_id'])
 
             employees.append(employee.__dict__)
 
@@ -83,21 +81,18 @@ def get_single_employee(id):
         # into the SQL statement.
         db_cursor.execute("""
         SELECT
-            a.id,
-            a.name,
-            a.email,
-            a.employee,
-            a.location_id
-        FROM employee a
-        WHERE a.id = ?
+            e.id,
+            e.name,
+            e.location_id
+        FROM employee e
+        WHERE e.id = ?
         """, ( id, ))
 
         # Load the single result into memory
         data = db_cursor.fetchone()
 
         # Create an animal instance from the current row
-        employee = Employee(data['id'], data['name'], data['email'],
-                            data['employee'], data['location_id'])
+        employee = Employee(data['id'], data['name'], data['location_id'])
 
         return json.dumps(employee.__dict__)
 
@@ -141,3 +136,27 @@ def update_employee(id, new_employee):
             # Found the animal. Update the value.
             EMPLOYEES[index] = new_employee
             break
+
+def get_employees_by_location(location):
+
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        select
+            e.id,
+            e.name,
+            e.location_id
+        from employee e
+        WHERE e.location_id = ?
+        """, ( location, ))
+
+        employees = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            employee = Employee(row['id'], row['name'], row['location_id'])
+            employees.append(employee.__dict__)
+
+    return json.dumps(employees)

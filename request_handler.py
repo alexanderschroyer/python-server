@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from animals import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal
-from employees import get_all_employees, get_single_employee, create_employee, delete_employee, update_employee
+from animals import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal, get_animals_by_location, get_animals_by_status
+from employees import get_all_employees, get_single_employee, create_employee, delete_employee, update_employee, get_employees_by_location
 from locations import get_all_locations, get_single_location, create_location, delete_location, update_location
 from customers import get_all_customers, get_single_customer, create_customer, delete_customer, update_customer, get_customers_by_email
 
@@ -86,7 +86,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         # items in it, which means the request was for
         # `/animals` or `/animals/2`
         if len(parsed) == 2:
-            (resource, id) = parsed # pylint: disable=unbalanced-tuple-unpacking
+            (resource, id) = parsed
 
             if resource == "animals":
                 if id is not None:
@@ -121,7 +121,16 @@ class HandleRequests(BaseHTTPRequestHandler):
             if key == "email" and resource == "customers":
                 response = get_customers_by_email(value)
 
-        self.wfile.write(response.encode())
+            elif key == "location_id" and resource == "animals":
+                response = get_animals_by_location(value)
+
+            elif key == "location_id" and resource == "employees":
+                response = get_employees_by_location(value)
+
+            elif key == "status" and resource == "animals":
+                response = get_animals_by_status(value)
+
+        self.wfile.write(f"{response}".encode())
         # Your new console.log() that outputs to the terminal
         # print(self.path)
 
@@ -147,8 +156,8 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Convert JSON string to a Python dictionary
         post_body = json.loads(post_body)
 
-        # Parse the URL 
-        (resource, id ) = self.parse_url(self.path) #pylint: disable=unbalanced-tuple-unpacking
+        # Parse the URL
+        (resource, id ) = self.parse_url(self.path)
 
         # Initialize new animal
         new_animal = None
@@ -188,7 +197,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         post_body = json.loads(post_body)
 
         # Parse the URL
-        (resource, id) = self.parse_url(self.path)# pylint: disable=unbalanced-tuple-unpacking
+        (resource, id) = self.parse_url(self.path)
 
         # Delete a single animal from the list
         if resource == "animals":
@@ -219,7 +228,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         self._set_headers(204)
 
         # Parse the URL
-        (resource, id) = self.parse_url(self.path) # pylint: disable=unbalanced-tuple-unpacking
+        (resource, id) = self.parse_url(self.path)
 
         # Delete a single animal from the list
         if resource == "animals":
@@ -246,5 +255,5 @@ def main():
     port = 8088
     HTTPServer((host, port), HandleRequests).serve_forever()
 
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()

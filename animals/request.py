@@ -143,20 +143,14 @@ def create_animal(animal):
 
 
 def delete_animal(id):
-    """errorfix"""
-    # Initial -1 value for animal index, in case one isn't found
-    animal_index = -1
+    """bugfix"""
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
 
-    # Iterate the ANIMALS list, but use enumerate() so that you
-    # can access the index value of each item
-    for index, animal in enumerate(ANIMALS):
-        if animal["id"] == id:
-            # Found the animal. Store the current index.
-            animal_index = index
-
-    # If the animal was found, use pop(int) to remove it from list
-    if animal_index >= 0:
-        ANIMALS.pop(animal_index)
+        db_cursor.execute("""
+        DELETE FROM animal
+        WHERE id = ?
+        """, (id, ))
 
 
 def update_animal(id, new_animal):
@@ -170,7 +164,36 @@ def update_animal(id, new_animal):
             break
 
 def get_animals_by_location(location):
+    """bugfix"""
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
+        db_cursor.execute("""
+        select
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.location_id,
+            a.customer_id
+        from animal a
+        WHERE a.location_id = ?
+        """, ( location, ))
+
+        animals = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            animal = Animal(row['id'], row['name'], row['breed'],
+                            row['status'], row['location_id'],
+                            row['customer_id'])
+            animals.append(animal.__dict__)
+
+    return json.dumps(animals)
+
+def get_animals_by_status(status):
+    """bugfix"""
     with sqlite3.connect("./kennel.db") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
@@ -184,8 +207,8 @@ def get_animals_by_location(location):
             a.customer_id,
             a.status
         from Animal a
-        WHERE a.location = ?
-        """, ( location, ))
+        WHERE a.status = ?
+        """, ( status, ))
 
         animals = []
         dataset = db_cursor.fetchall()
