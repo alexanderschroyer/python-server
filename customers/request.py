@@ -6,7 +6,8 @@ CUSTOMERS = [{
     "name": "Eric \"Macho Man\" Taylor",
     "email": "macho@man.com",
     "password": "eric",
-    "id": 1
+    "id": 1,
+    "location_id": 1
 }]
 
 
@@ -125,7 +126,7 @@ def get_customers_by_email(email):
             c.address,
             c.email,
             c.password
-        from customer c
+        from Customer c
         WHERE c.email = ?
         """, ( email, ))
 
@@ -133,7 +134,7 @@ def get_customers_by_email(email):
         dataset = db_cursor.fetchall()
 
         for row in dataset:
-            customer = Customer(row['id'], row['name'], row['address'], row['email']
+            customer = Customer(row['id'], row['name'], row['address'], row['email'] 
             , row['password'])
             customers.append(customer.__dict__)
 
