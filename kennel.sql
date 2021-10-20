@@ -61,3 +61,7 @@ INSERT INTO `Animal` VALUES (null, "Daps", "Kennel", "Boxer", 2, 2);
 
 
 INSERT INTO `Animal` VALUES (null, "Daps", "Kennel", "Boxer", 2, 2);
+
+SELECT * FROM animal ORDER BY id DESC;
+
+SELECT * FROM location ORDER BY id DESC;
