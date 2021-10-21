@@ -4,48 +4,6 @@ from models import Customer
 from models import Animal
 from models import Location
 
-ANIMALS = [{
-    "id": 1,
-    "name": "Snickers",
-    "breed": "Dog",
-    "location_id": 1,
-    "customer_Id": 4,
-    "status": "Admitted"
-}, {
-    "id": 2,
-    "name": "Gypsy",
-    "breed": "Dog",
-    "location_id": 1,
-    "customer_Id": 2,
-    "status": "Admitted"
-}, {
-    "id": 3,
-    "name": "Blue",
-    "breed": "Cat",
-    "location_id": 2,
-    "customer_Id": 1,
-    "status": "Admitted"
-}, {
-    "id": 4,
-    "name": "Henley",
-    "breed": "Carolina Retriever ",
-    "location_id": 1,
-    "status": "Admitted"
-}, {
-    "id": 5,
-    "name": "Derkins",
-    "breed": "Shih tzu ",
-    "location_id": 2,
-    "status": "Admitted"
-}, {
-    "id": 6,
-    "name": "Checkers",
-    "breed": "Bulldog",
-    "location_id": 1,
-    "status": "Admitted"
-}]
-
-
 # def get_all_animals():
 #     return ANIMALS
 def get_all_animals():
